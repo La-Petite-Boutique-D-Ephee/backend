@@ -1,0 +1,25 @@
+name: Technical Ticket
+description: Template for technical ticket
+title: 🛠️T00 - <titre>
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: DESCRIPTION
+      description: Donnez une courte description de la fonctionnalité à mettre en place
+      placeholder: Mise en place de ..., configuration de ... etc
+    validations:
+      required: true
+  - type: textarea
+    id: tasks
+    attributes:
+      label: TACHES
+      description: Ajoutez les tâches
+      placeholder: " - [] Tache 1"
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: NOTES
+      description: Donnez des informations complémentaires si besoin

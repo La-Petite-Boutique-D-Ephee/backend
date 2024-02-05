@@ -1,0 +1,42 @@
+name: Rapport de Bug
+description: Description d'un bug
+title: 🐛 - <titre>
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: DESCRIPTION
+      description: Décrivez le bug
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: COMPORTEMENT ATTENDU
+      description: >-
+        Indiquez le comportement attendu (copiez la règle métier en corrélation
+        avec le bug, avec l'ID du ticket))
+      placeholder: |-
+        Ticket : F01
+        Règle métier :
+          - Règle 1 ...
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: ETAPES POUR REPRODUIRE LE BUG
+      placeholder: |-
+        1. Go to '...'
+        2. Click on '....'
+        3. Scroll down to '....'
+        4. See error
+    validations:
+      required: true
+  - type: textarea
+    id: assets
+    attributes:
+      label: ASSETS
+      description: >-
+        Joigniez des capture d'écran, videos ou tout autre document qui pourrait
+        être utile

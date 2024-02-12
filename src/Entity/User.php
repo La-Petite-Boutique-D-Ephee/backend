@@ -8,6 +8,10 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\Uid\UuidV6;
+use Symfony\Component\Validator\Constraints\Email;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Regex;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
@@ -20,6 +24,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?UuidV6  $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
+    #[NotBlank(message: "L'email est obligatoire")]
+    #[Email(message: "L'email n'est pas valide")]
+    #[Length(
+        max: 255,
+        maxMessage: "L'email ne peux pas dépasser {{ limit }} caractères."
+    )]
     private ?string $email = null;
 
     #[ORM\Column]
@@ -29,12 +39,33 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var string The hashed password
      */
     #[ORM\Column]
+    #[NotBlank(message: "Le mot de passe est obligatoire")]
+    #[Length(
+        min: 12,
+        max: 255,
+        minMessage: "Le mot de passe doit avoir {{ limit }} caractères de longueur.",
+        maxMessage: "Le mot de passe ne peux pas dépasser {{ limit }} caractères."
+    )]
+    #[Regex(
+        pattern: '/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[#@.\/+-])/',
+        message: 'Password must contain at least one minuscule, one majuscule, one number and one special char (#@./+-)'
+    )]
     private ?string $password = null;
 
     #[ORM\Column(length: 50)]
+    #[NotBlank(message: 'Le prénom est obligatoire.')]
+    #[Length(
+        max: 50,
+        maxMessage: 'Le prénom ne peux pas dépasser {{ limit }} caractères.'
+    )]
     private ?string $firstname = null;
 
     #[ORM\Column(length: 50)]
+    #[NotBlank(message: 'Le nom est obligatoire.')]
+    #[Length(
+        max: 50,
+        maxMessage: 'Le nom ne peux pas dépasser {{ limit }} caractères.'
+    )]
     private ?string $lastname = null;
 
     #[ORM\Column]
@@ -43,8 +74,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?\DateTimeImmutable $updatedAt = null;
 
+    public const STATUS_INACTIVE = 'inactive';
+    public const STATUS_BANNED = 'banned';
+    public const STATUS_ACTIVE = 'active';
+    #[ORM\Column(length: 25)]
+    private ?string $status = null;
+
     public function __construct()
     {
+        $this->roles = ['ROLE_USER'];
         $this->createdAt = new \DateTimeImmutable("now", new \DateTimeZone("Europe/Paris"));
         $this->updatedAt = new \DateTimeImmutable("now", new \DateTimeZone("Europe/Paris"));
     }
@@ -86,12 +124,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return (string) $this->email;
     }
 
+    public function getUsername(): string
+    {
+        return $this->getUserIdentifier();
+    }
+
     /**
      * @see UserInterface
      */
     public function getRoles(): array
     {
-        return array_unique(array_merge($this->roles, ['ROLE_USER']));
+        $roles = $this->roles;
+        // guarantee every user at least has ROLE_USER
+        $roles[] = 'ROLE_USER';
+
+        return array_unique($roles);
     }
 
     public function setRoles(array $roles): static
@@ -169,6 +216,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private function setUpdatedAt(\DateTimeImmutable $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(string $status): static
+    {
+        if (!in_array($status, [self::STATUS_INACTIVE, self::STATUS_BANNED, self::STATUS_ACTIVE])) {
+            throw new \InvalidArgumentException("Invalid status value: $status");
+        }
+
+        $this->status = $status;
 
         return $this;
     }

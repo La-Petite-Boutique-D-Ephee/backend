@@ -159,7 +159,7 @@ class UserController extends AbstractController
             ],
             'json',
             [
-                'groups' => 'user:read'
+                'groups' => 'read:item:User'
             ]
         );
 

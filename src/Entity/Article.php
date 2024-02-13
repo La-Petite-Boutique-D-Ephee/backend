@@ -21,38 +21,38 @@ class Article
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     #[ORM\Column(type: 'uuid', unique: true)]
-    #[Groups(["user:read", "article:collection"])]
+    #[Groups(["read:item:User", "read:collection:Article"])]
     private ?UuidV6  $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["user:read", "article:collection", "article:show"])]
+    #[Groups(["read:item:User", "read:collection:Article", "show:item:Article"])]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups(["user:read", "article:collection", "article:show"])]
+    #[Groups(["read:item:User", "read:collection:Article", "show:item:Article"])]
     private ?string $content = null;
 
     #[ORM\Column]
-    #[Groups(["article:collection"])]
+    #[Groups(["read:item:User", "read:collection:Article"])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["article:collection"])]
+    #[Groups(["read:item:User", "read:collection:Article"])]
     private ?string $slug = null;
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'articles')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["article:show"])]
+    #[Groups(["show:item:Article"])]
     private ?User $user = null;
 
     #[Vich\UploadableField(mapping: 'articles', fileNameProperty: 'thumbnail')]
     private ?File $imageFile = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(["article:show", "article:collection"])]
+    #[Groups(["read:item:User", "show:item:Article", "read:collection:Article"])]
     private ?string $thumbnail = null;
 
     public function __construct()

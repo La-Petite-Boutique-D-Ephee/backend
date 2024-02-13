@@ -25,7 +25,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     #[ORM\Column(type: 'uuid', unique: true)]
-    #[Groups(["read:User:collection"])]
+    #[Groups(["read:collection:User"])]
     private ?UuidV6  $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
@@ -35,7 +35,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         max: 255,
         maxMessage: "L'email ne peux pas dépasser {{ limit }} caractères."
     )]
-    #[Groups(["user:read"])]
+    #[Groups(["read:item:User"])]
     private ?string $email = null;
 
     #[ORM\Column]
@@ -64,7 +64,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         max: 50,
         maxMessage: 'Le prénom ne peux pas dépasser {{ limit }} caractères.'
     )]
-    #[Groups(["user:read", "article:show"])]
+    #[Groups(["read:item:User", "show:item:Article"])]
     private ?string $firstname = null;
 
     #[ORM\Column(length: 50)]
@@ -73,13 +73,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         max: 50,
         maxMessage: 'Le nom ne peux pas dépasser {{ limit }} caractères.'
     )]
-    #[Groups(["user:read"])]
+    #[Groups(["read:item:User"])]
     private ?string $lastname = null;
 
     #[ORM\Column]
+    #[Groups(["read:item:User"])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column]
+    #[Groups(["read:item:User"])]
     private ?\DateTimeImmutable $updatedAt = null;
 
     public const STATUS_INACTIVE = 'inactive';
@@ -89,7 +91,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $status = null;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Article::class, orphanRemoval: true)]
-    #[Groups(["user:read"])]
+    #[Groups(["read:item:User"])]
     private Collection $articles;
 
     public function __construct()

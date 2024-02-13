@@ -104,7 +104,7 @@ class ArticleController extends AbstractController
                 "article" => $showArticle
             ]
         ], 'json', [
-            "groups" => ["article:show"]
+            "groups" => ["show:item:Article"]
         ]);
 
         return new JsonResponse($response, json: true);

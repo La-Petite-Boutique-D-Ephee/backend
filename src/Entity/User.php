@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Uid\UuidV6;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\Length;
@@ -16,6 +17,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Regex;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 #[ORM\Table(name: '`user`')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -23,6 +25,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     #[ORM\Column(type: 'uuid', unique: true)]
+    #[Groups(["read:User:collection"])]
     private ?UuidV6  $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
@@ -32,6 +35,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         max: 255,
         maxMessage: "L'email ne peux pas dépasser {{ limit }} caractères."
     )]
+    #[Groups(["user:read"])]
     private ?string $email = null;
 
     #[ORM\Column]
@@ -60,6 +64,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         max: 50,
         maxMessage: 'Le prénom ne peux pas dépasser {{ limit }} caractères.'
     )]
+    #[Groups(["user:read", "article:show"])]
     private ?string $firstname = null;
 
     #[ORM\Column(length: 50)]
@@ -68,6 +73,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         max: 50,
         maxMessage: 'Le nom ne peux pas dépasser {{ limit }} caractères.'
     )]
+    #[Groups(["user:read"])]
     private ?string $lastname = null;
 
     #[ORM\Column]
@@ -83,6 +89,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $status = null;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Article::class, orphanRemoval: true)]
+    #[Groups(["user:read"])]
     private Collection $articles;
 
     public function __construct()

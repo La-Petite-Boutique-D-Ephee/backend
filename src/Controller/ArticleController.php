@@ -36,12 +36,13 @@ class ArticleController extends AbstractController
     }
 
     #[Route('/', name: 'all_article', methods: ["GET"])]
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
+        $limit = $request->query->get('limit');
 
-        $article = $this->articleRepository->findBy([], ["id" => "DESC"]);
+        $article = $this->articleRepository->getArticles();
 
-        $jsonArticle = $this->serializerInterface->serialize($article, 'json', ['groups' => 'article:collection']);
+        $jsonArticle = $this->serializerInterface->serialize($article, 'json', ['groups' => 'read:collection:Article']);
 
         return new JsonResponse($jsonArticle, JsonResponse::HTTP_OK, [], true);
     }

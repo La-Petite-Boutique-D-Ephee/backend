@@ -13,3 +13,4 @@ compose.yml
 /config/jwt/*.pem
 ###< lexik/jwt-authentication-bundle ###
 /public/uploads
+ask.md
